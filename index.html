@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <!-- Programmed by Mahmoud Hamdy -->
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="style.css">
+    <title>Typing Speed Test Game</title>
+</head>
+<body>
+    <div class="game">
+        <div class="name">Typing Speed Test Game</div>
+        <div class="container">
+            <div class="message">
+                You Are Playing On
+                <span class="lvl"></span> Level & You Have <span class="seconds"></span> Seconds To Type Word 
+            </div>
+            <div class="start">Start Playing</div>
+            <div class="the-word"></div>
+            <input type="text" class="input"/>
+            <div class="upcoming-words">Words Will Show Here</div>
+            <div class="control">
+                <div class="time">Time Left: <span></span> Seconds</div>
+                <div class="score">Score: <span class="got">0</span> from <span class="total"></span></div>
+            </div>
+            <div class="finish"></div>
+            <div class="lapel">
+                <label for="livel">choos level : </label>
+                <select id="livel">
+                    <option value="Esey" selected>Esey</option>
+                    <option value="Normal" >Normal</option>
+                    <option value="Hard" >Hard</option>
+                </select>
+            </div>
+            <div class="button"><button>Reload</button></div>
+        </div>
+    </div>
+    <script src="main.js"></script>
+</body>
+</html>
