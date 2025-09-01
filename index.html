@@ -1,7 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <!-- Programmed by Mahmoud Hamdy -->
     <meta charset="UTF-8">
     <link rel="stylesheet" href="style.css">
     <title>Typing Speed Test Game</title>
@@ -24,13 +23,24 @@
             </div>
             <div class="finish"></div>
             <div class="lapel">
-                <label for="livel">choos level : </label>
-                <select id="livel">
-                    <option value="Esey" selected>Esey</option>
-                    <option value="Normal" >Normal</option>
-                    <option value="Hard" >Hard</option>
-                </select>
+                <label class="cyberpunk-checkbox-label"> 
+                    <input type="checkbox" class="cyberpunk-checkbox" id="training__mode">
+                Training mode </label>
+                <div class="level-select">
+                    <label for="livel">choos level : </label>
+                    <select id="livel">
+                        <option value="Esey" selected>Esey</option>
+                        <option value="Normal" >Normal</option>
+                        <option value="Hard" >Hard</option>
+                    </select>
+                </div>
             </div>
+             <div class="score--all">
+            <div id="high__score"></div>
+            <div id="stats__correct"></div>
+            <div id="stats__wrong"></div>
+            <div id="stats__total"></div>
+         </div>
             <div class="button"><button>Reload</button></div>
         </div>
     </div>
