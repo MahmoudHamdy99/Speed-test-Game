@@ -1,25 +1,29 @@
-const words = [
+
+const words_en = [
     "JavaScript",
     "Programming",
     "Developer",
     "Website",
     "Python",
     "React",
-    "Proect",
+    "Project",
     "Responsive",
-    "Databases"
-]
-// seteng levels
+    "Databases",
+    "Algorithm",
+    "Function",
+    "Variable",
+    "Object",
+    "Array",
+    "Component"
+];
+
 const lvls = {
     "Esey": 7,
     "Normal": 4,
     "Hard": 3
-}
-// default level
+};
 
 
-
-// Catch selectors
 let startButton = document.querySelector(".start");
 let lvlNameSpan = document.querySelector(".message .lvl");
 let secondsSpan = document.querySelector(".message .seconds");
@@ -33,90 +37,173 @@ let finishMessage = document.querySelector(".finish");
 let scoreTime = document.querySelector("#score__time");
 let buttons = document.querySelector(".button");
 
-document.querySelector("select").addEventListener('change', rooo);
+let langSelect = document.getElementById("lang__select");
+let trainingCheckbox = document.getElementById("training__mode");
+let highScoreDiv = document.getElementById("high__score");
+let statsCorrect = document.getElementById("stats__correct");
+let statsWrong = document.getElementById("stats__wrong");
+let statsTotal = document.getElementById("stats__total");
 
-function rooo(){
+let words = [...words_en] 
+let trainingMode = trainingCheckbox ? trainingCheckbox.checked : false;
+
+
+let stats = { correct: 0, wrong: 0, total: 0 };
+
+function updateStats(correct) {
+    stats.total++;
+    if (correct) stats.correct++;
+    else stats.wrong++;
+    if (statsCorrect) statsCorrect.innerHTML = ` Correct : ${stats.correct}`;
+    if (statsWrong) statsWrong.innerHTML = ` Wrong : ${stats.wrong}`;
+    if (statsTotal) statsTotal.innerHTML = ` Total : ${stats.total}`;
+}
+
+function saveHighScore(score) {
+    let highScore = localStorage.getItem("high__score") || 0;
+    if (score > highScore) {
+        localStorage.setItem("high__score", score);
+    }
+}
+
+function updateStats(correct) {
+    stats.total++;
+    if (correct) {
+        stats.correct++;
+        saveHighScore(stats.correct); 
+    } else {
+        stats.wrong++;
+    }
+    if (statsCorrect) statsCorrect.innerHTML = `Correct: ${stats.correct}`;
+    if (statsWrong) statsWrong.innerHTML = `Wrong: ${stats.wrong}`;
+    if (statsTotal) statsTotal.innerHTML = `Total: ${stats.total}`;
+}
+
+function showHighScore() {
+    let highScore = localStorage.getItem("high__score") || 0;
+    if (highScoreDiv){
+        highScoreDiv.innerHTML = `High score: ${highScore}`;
+    } 
+}
+
+function rooo() {
     let levelSlect = document.querySelector("select").value;
     let defaultLevelName = levelSlect;
     let defaultLevelSeconds = lvls[defaultLevelName];
-    // seteng levels Name + Seconds + score
     lvlNameSpan.innerHTML = defaultLevelName;
     secondsSpan.innerHTML = defaultLevelSeconds;
-    timeLeftSpan.innerHTML = defaultLevelSeconds;
+    timeLeftSpan.innerHTML = trainingMode ? "∞" : defaultLevelSeconds;
     scoreTotal.innerHTML = words.length;
-};
+}
+
+if (trainingCheckbox) {
+    trainingCheckbox.addEventListener('change', function () {
+        trainingMode = trainingCheckbox.checked;
+        rooo();
+    });
+}
+
+document.querySelector("select").addEventListener('change', rooo);
 
 input.onpaste = function () {
     return false;
 };
 
-// Start Game
 startButton.onclick = function () {
     this.remove();
     input.focus();
-    // Generate Word Function
-    genWords()
+    showHighScore();
+    if (statsCorrect) statsCorrect.innerHTML = stats.correct;
+    if (statsWrong) statsWrong.innerHTML = stats.wrong;
+    if (statsTotal) statsTotal.innerHTML = stats.total;
+    genWords();
 };
 
 function genWords() {
-    // Get Random Word From Array
-    let randomWord = words[Math.floor(Math.random() * words.length)]
-    // Get Word Index
+    let randomWord = words[Math.floor(Math.random() * words.length)];
     let wordIndex = words.indexOf(randomWord);
-    // Remove Wordfrom Array
     words.splice(wordIndex, 1);
-    // Showe The Random Word
-    theWord.innerHTML = randomWord
-    // Emty Upcoming Words
+    theWord.innerHTML = randomWord;
     upcomingWords.innerHTML = '';
-    // Generate Words
     for (let i = 0; i < words.length; i++) {
-        // Creat Div Element 
         let div = document.createElement('div');
         let txt = document.createTextNode(words[i]);
         div.appendChild(txt);
         upcomingWords.appendChild(div);
     }
-    // Cole Start Play Funshen
-    startPlay ()
-};
+    startPlay();
+}
 
-function startPlay () {
-    rooo()
-    let start = setInterval(() => {
-        timeLeftSpan.innerHTML--;
-        if ( timeLeftSpan.innerHTML === "0") {
-            // Stop
-            clearInterval(start);
-            //compaer word
-            if (theWord.innerHTML.toLowerCase() === input.value.toLowerCase()){
-                // Empty Input Field
-                input.value = '';
-                // Incrase Score
-                scoreGot.innerHTML++;
-                if (words.length > 0) {
-                    // Coll Genearet Word Functin
-                    genWords();
-                }else {
-                    let span = document.createElement("span");
-                    span.className = 'good';
-                    let spanText = document.createTextNode("Congratz");
-                    span.appendChild(spanText);
-                    finishMessage.appendChild(span);
-                    // Remove Upcoming Words Box
-                    upcomingWords.remove();
+function startPlay() {
+    rooo();
+    if (trainingMode) {
+        input.onkeydown = function (e) {
+            if (e.key === "Enter") {
+                let correct = theWord.innerHTML.toLowerCase() === input.value.toLowerCase();
+                updateStats(correct);
+                if (correct) {
+                    input.value = '';
+                    scoreGot.innerHTML++;
+                    if (words.length > 0) {
+                        genWords();
+                    } else {
+                        let span = document.createElement("span");
+                        span.className = 'good';
+                        let spanText = document.createTextNode("Congratz");
+                        span.appendChild(spanText);
+                        finishMessage.appendChild(span);
+                        upcomingWords.remove();
+                        saveHighScore(scoreGot.innerHTML);
+                        showHighScore();
+                    }
+                } else {
+                    input.value = ''; 
                 }
-            } else {
-                let span = document.createElement("span");
-                span.className = 'bad';
-                let text = document.createTextNode("Game Over");
-                span.appendChild(text);
-                finishMessage.appendChild(span);
-            };
+            }
         };
-    }, 1000);
-};
+    } else {
+        let start = setInterval(() => {
+            timeLeftSpan.innerHTML--;
+            if (timeLeftSpan.innerHTML === "0") {
+                clearInterval(start);
+                let correct = theWord.innerHTML.toLowerCase() === input.value.toLowerCase();
+                updateStats(correct);
+                if (correct) {
+                    input.value = '';
+                    scoreGot.innerHTML++;
+                    if (words.length > 0) {
+                        genWords();
+                    } else {
+                        let span = document.createElement("span");
+                        span.className = 'good';
+                        let spanText = document.createTextNode("Congratz");
+                        span.appendChild(spanText);
+                        finishMessage.appendChild(span);
+                        upcomingWords.remove();
+                        saveHighScore(scoreGot.innerHTML);
+                        showHighScore();
+                    }
+                } else {
+                    let span = document.createElement("span");
+                    span.className = 'bad';
+                    let text = document.createTextNode("Game Over");
+                    span.appendChild(text);
+                    finishMessage.appendChild(span);
+                    saveHighScore(scoreGot.innerHTML);
+                    showHighScore();
+                }
+            }
+        }, 1000);
+    }
+}
 
-buttons.onclick = function() {
+buttons.onclick = function () {
     window.location.reload();
 };
+
+document.addEventListener("DOMContentLoaded", function () {
+    showHighScore();
+    if (statsCorrect) statsCorrect.innerHTML = `Correct: ${stats.correct}`;
+    if (statsWrong) statsWrong.innerHTML = `Wrong: ${stats.wrong}`;
+    if (statsTotal) statsTotal.innerHTML = `Total: ${stats.total}`;
+});
